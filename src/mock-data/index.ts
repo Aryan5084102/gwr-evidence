@@ -44,10 +44,10 @@ export const attemptMeta: AttemptMeta = {
     "Two independent timekeepers maintained a synchronised NTP-locked official log to ±0.01s. " +
     "Activity and rest sequences were captured using the GWR Activity Log Book template and " +
     "auto-validated against the 5-min-per-uninterrupted-hour rest accrual rule.",
-  contactFirstName: "Vaigai",
+  contactFirstName: "Aryan",
   contactLastName: "Glimmora",
   contactNationality: "Indian",
-  contactGender: "Female",
+  contactGender: "Male",
 };
 
 /* ============ Witnesses ============ */
