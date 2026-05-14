@@ -17,6 +17,13 @@ import ReportGeneration from "@/pages/ReportGeneration";
 import SubmissionPackage from "@/pages/SubmissionPackage";
 import Analytics from "@/pages/Analytics";
 import SecurityAudit from "@/pages/SecurityAudit";
+import CoverLetterBuilder from "@/pages/CoverLetterBuilder";
+import WitnessSystem from "@/pages/WitnessSystem";
+import WitnessSign from "@/pages/WitnessSign";
+import ActivityLogbook from "@/pages/ActivityLogbook";
+import StewardStatement from "@/pages/StewardStatement";
+import TimekeeperStatement from "@/pages/TimekeeperStatement";
+import WitnessStatement from "@/pages/WitnessStatement";
 
 export default function App() {
   return (
@@ -29,6 +36,13 @@ export default function App() {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/submissions/new" element={<CreateSubmission />} />
+        <Route path="/cover-letter" element={<CoverLetterBuilder />} />
+        <Route path="/witnesses" element={<WitnessSystem />} />
+        <Route path="/witness/sign/:token" element={<WitnessSign />} />
+        <Route path="/logbook" element={<ActivityLogbook />} />
+        <Route path="/steward-statement" element={<StewardStatement />} />
+        <Route path="/timekeeper-statement" element={<TimekeeperStatement />} />
+        <Route path="/witness-statement" element={<WitnessStatement />} />
         <Route path="/evidence/upload" element={<EvidenceUpload />} />
         <Route path="/ai/processing" element={<AIProcessing />} />
         <Route path="/review" element={<EvidenceReview />} />

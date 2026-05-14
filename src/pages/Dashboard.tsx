@@ -1,156 +1,270 @@
+import { useMemo } from "react";
 import {
-  FileCheck2,
-  Loader2,
-  ScanSearch,
+  Trophy,
   Sparkles,
-  TriangleAlert,
+  ShieldCheck,
+  Users,
+  ClipboardCheck,
+  ArrowRight,
+  AlertTriangle,
+  CheckCircle2,
   Activity,
-  ChevronRight,
+  Clock,
+  Package,
+  Mail,
 } from "lucide-react";
-import StatCard from "@/components/StatCard";
+import { Link } from "react-router-dom";
 import { Badge, Button, Card, CardHeader, PageHeader, Progress } from "@/components/ui";
-import AIInsightCard from "@/components/AIInsightCard";
-import StatusBadge from "@/components/StatusBadge";
-import { reviewers, submissions } from "@/mock-data";
-import { formatDate } from "@/lib/utils";
-import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
+import {
+  attemptMeta,
+  witnesses,
+  activityRows,
+  restRows,
+  aiAlerts,
+} from "@/mock-data";
+import { buildLogbook, computeSubmissionHealth, fmtAttemptDuration, fmtDuration } from "@/lib/gwr";
+import { formatDate, formatTime } from "@/lib/utils";
 
-const chartData = [
-  { d: "Mon", uploads: 24, reviews: 18 },
-  { d: "Tue", uploads: 38, reviews: 22 },
-  { d: "Wed", uploads: 31, reviews: 27 },
-  { d: "Thu", uploads: 52, reviews: 34 },
-  { d: "Fri", uploads: 49, reviews: 41 },
-  { d: "Sat", uploads: 28, reviews: 23 },
-  { d: "Sun", uploads: 33, reviews: 30 },
-];
+const WORKFLOW = [
+  { to: "/submissions/new", label: "Attempt Setup", icon: Trophy, status: "complete" },
+  { to: "/cover-letter", label: "Cover Letter", icon: ClipboardCheck, status: "complete" },
+  { to: "/witnesses", label: "Witnesses", icon: Users, status: "in-progress" },
+  { to: "/logbook", label: "Activity Logbook", icon: Activity, status: "in-progress" },
+  { to: "/evidence/upload", label: "Evidence", icon: ShieldCheck, status: "pending" },
+  { to: "/package", label: "Submission Package", icon: Package, status: "pending" },
+] as const;
 
 export default function Dashboard() {
+  const witnessById = useMemo(() => {
+    const m: Record<string, (typeof witnesses)[number]> = {};
+    witnesses.forEach((w) => (m[w.id] = w));
+    return m;
+  }, []);
+
+  const log = useMemo(
+    () => buildLogbook(activityRows, restRows, witnessById),
+    [witnessById],
+  );
+
+  const health = useMemo(
+    () =>
+      computeSubmissionHealth({
+        meta: attemptMeta,
+        witnesses,
+        activities: activityRows,
+        rests: restRows,
+        evidenceCount: 312,
+        videoCount: 18,
+        photoCount: 64,
+        mediaArticlesCount: 7,
+        timekeeperCount: 2,
+        qualificationsUploaded: true,
+        layoutDiagramUploaded: true,
+      }),
+    [],
+  );
+
+  const witnessStats = {
+    total: witnesses.length,
+    completed: witnesses.filter((w) => w.status === "completed").length,
+    pending: witnesses.filter((w) => w.status !== "completed").length,
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Adjudication Overview"
-        subtitle="Active submissions, AI processing intelligence, and reviewer activity across the global verification pipeline."
+        title="Submission Operations"
+        subtitle="The Glimmora GWR Submission OS automates every artefact required by Guinness World Records — from cover letter to final ZIP."
         actions={
           <>
-            <Button variant="outline">Export digest</Button>
-            <Button variant="gold"><Sparkles className="h-4 w-4" /> Ask AI</Button>
+            <Button variant="outline">
+              <Sparkles className="h-4 w-4" /> AI assistant
+            </Button>
+            <Link to="/package">
+              <Button variant="gold">
+                Build submission <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </>
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatCard label="Total Submissions" value={1248} delta="+8.2% w/w" tone="gold" Icon={FileCheck2} />
-        <StatCard label="Processing" value={37} delta="+12% w/w" tone="blue" Icon={Loader2} />
-        <StatCard label="Under Review" value={94} tone="blue" Icon={ScanSearch} />
-        <StatCard label="Approved" value={812} delta="+2.1% w/w" tone="green" Icon={FileCheck2} />
-        <StatCard label="Missing Evidence" value={11} tone="red" Icon={TriangleAlert} />
-      </div>
+      {/* Attempt hero card */}
+      <Card className="!p-0 overflow-hidden">
+        <div className="bg-blue-shine text-white p-6 grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 items-center">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.24em] opacity-80 flex items-center gap-2">
+              <Trophy className="h-4 w-4 text-gold" /> Current Attempt
+            </div>
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mt-2 leading-tight">
+              {attemptMeta.recordTitle}
+            </h2>
+            <div className="text-[12px] opacity-80 mt-1">
+              {attemptMeta.applicationRef} · {attemptMeta.organisation}
+            </div>
+            <div className="flex flex-wrap items-center gap-3 mt-4 text-[13px]">
+              <Badge tone="gold">
+                <Clock className="h-3 w-3" /> {fmtAttemptDuration(attemptMeta.startISO, attemptMeta.endISO)}
+              </Badge>
+              <span className="opacity-90">
+                {formatDate(attemptMeta.startISO)} {formatTime(attemptMeta.startISO)} →{" "}
+                {formatDate(attemptMeta.endISO)} {formatTime(attemptMeta.endISO)}
+              </span>
+              <span className="opacity-90">·  {attemptMeta.venue}, {attemptMeta.city}</span>
+              <span className="opacity-90">· {attemptMeta.participantCount} participants</span>
+            </div>
+          </div>
+          <div className="text-center lg:text-right">
+            <div className="text-[10px] uppercase tracking-[0.24em] opacity-80">Submission Health</div>
+            <div className="text-6xl font-extrabold leading-none mt-1">
+              {health.score}
+              <span className="text-2xl opacity-80">/100</span>
+            </div>
+            <div className="mt-2">
+              <Badge tone={health.score >= 90 ? "green" : "gold"}>
+                {health.score >= 90 ? "Submission-ready" : "Awaiting final evidence"}
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </Card>
 
+      {/* Workflow stepper */}
+      <Card>
+        <CardHeader title="Guinness submission workflow" subtitle="6 steps · automated end-to-end" />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {WORKFLOW.map((step) => (
+            <Link
+              key={step.to}
+              to={step.to}
+              className="group rounded-xl border border-line p-4 hover:border-royal hover:shadow-soft transition"
+            >
+              <div className="flex items-center justify-between">
+                <step.icon className="h-5 w-5 text-royal" />
+                {step.status === "complete" ? (
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                ) : step.status === "in-progress" ? (
+                  <Clock className="h-4 w-4 text-amber-500" />
+                ) : (
+                  <span className="h-2.5 w-2.5 rounded-full bg-line" />
+                )}
+              </div>
+              <div className="mt-3 font-semibold text-sm">{step.label}</div>
+              <div className="text-[11px] text-muted capitalize">{step.status.replace("-", " ")}</div>
+            </Link>
+          ))}
+        </div>
+      </Card>
+
+      {/* Three column: log summary, witness, alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
+        <Card>
           <CardHeader
-            title="Submission Pipeline"
-            subtitle="Last 7 days · uploads vs completed reviews"
-            action={<Badge tone="gold">Live</Badge>}
+            title="Activity log"
+            subtitle="Auto-calculated per GWR Endurance Marathon rules"
+            action={
+              <Link to="/logbook">
+                <Button variant="ghost">
+                  Open <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            }
           />
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="gU" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0057B8" stopOpacity={0.25} />
-                    <stop offset="100%" stopColor="#0057B8" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gR" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#C8A44D" stopOpacity={0.25} />
-                    <stop offset="100%" stopColor="#C8A44D" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="#E5E7EB" vertical={false} />
-                <XAxis dataKey="d" stroke="#6B7280" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#6B7280" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip
-                  contentStyle={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 12, boxShadow: "0 4px 12px rgba(15,23,42,0.08)" }}
-                  labelStyle={{ color: "#1F2937" }}
-                />
-                <Area type="monotone" dataKey="uploads" stroke="#0057B8" strokeWidth={2} fill="url(#gU)" />
-                <Area type="monotone" dataKey="reviews" stroke="#C8A44D" strokeWidth={2} fill="url(#gR)" />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="space-y-3">
+            <div>
+              <div className="text-[11px] text-muted uppercase tracking-wider mb-1 font-semibold">
+                Total activity
+              </div>
+              <div className="text-2xl font-bold">{fmtDuration(log.totalActivityMin)}</div>
+              <Progress value={Math.min(100, (log.totalActivityMin / (24 * 60)) * 100)} tone={log.totalActivityMin >= 24 * 60 ? "green" : "blue"} />
+              <div className="text-[11px] text-muted mt-1">
+                / 24h minimum (Rule 1)
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-line">
+              <div>
+                <div className="text-[11px] text-muted uppercase tracking-wider font-semibold">Rest taken</div>
+                <div className="font-bold">{fmtDuration(log.totalRestTakenMin)}</div>
+              </div>
+              <div>
+                <div className="text-[11px] text-muted uppercase tracking-wider font-semibold">Balance</div>
+                <div className={"font-bold " + (log.restBalanceMin > 0 ? "text-emerald-700" : "text-rose-600")}>
+                  {log.restBalanceMin} min
+                </div>
+              </div>
+            </div>
+            {log.violations.length === 0 ? (
+              <div className="flex items-center gap-2 text-emerald-700 text-[12px] pt-2 border-t border-line">
+                <CheckCircle2 className="h-4 w-4" /> All GWR rest rules respected
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-rose-700 text-[12px] pt-2 border-t border-line">
+                <AlertTriangle className="h-4 w-4" /> {log.violations.length} violation(s) — review logbook
+              </div>
+            )}
           </div>
         </Card>
 
         <Card>
-          <CardHeader title="AI Insights" subtitle="Generated 2 minutes ago" />
-          <div className="space-y-3">
-            <AIInsightCard
-              title="Submission GWR-2025-0411 is review-ready"
-              insight="All required evidence categories present. AI confidence 94%. Recommend assigning final adjudicator."
-              confidence={94}
-            />
-            <AIInsightCard
-              title="Audio clarity warning"
-              insight="4 announcement clips in 0421 fall below speech-to-text confidence threshold."
-              confidence={61}
-            />
+          <CardHeader
+            title="Witnesses"
+            subtitle="Digital signing system"
+            action={
+              <Link to="/witnesses">
+                <Button variant="ghost">
+                  Open <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            }
+          />
+          <div className="text-center mb-3">
+            <div className="text-4xl font-extrabold">{witnessStats.completed}<span className="text-2xl text-muted">/{witnessStats.total}</span></div>
+            <div className="text-[12px] text-muted">witness statements signed</div>
           </div>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader title="Active Submissions" subtitle="Real-time pipeline status" action={<Button variant="ghost">View all <ChevronRight className="h-4 w-4" /></Button>} />
-          <div className="overflow-x-auto -mx-2">
-            <table className="w-full text-sm">
-              <thead className="bg-canvas">
-                <tr className="text-left text-[11px] uppercase tracking-wider text-muted">
-                  <th className="px-2 py-2 font-medium">Record</th>
-                  <th className="px-2 py-2 font-medium">Status</th>
-                  <th className="px-2 py-2 font-medium">Progress</th>
-                  <th className="px-2 py-2 font-medium">Evidence</th>
-                  <th className="px-2 py-2 font-medium">Event Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {submissions.map((s) => (
-                  <tr key={s.id} className="border-t border-line hover:bg-canvas">
-                    <td className="px-2 py-3">
-                      <div className="font-semibold truncate max-w-[260px]">{s.recordName}</div>
-                      <div className="text-[11px] text-muted">{s.id} · {s.location}</div>
-                    </td>
-                    <td className="px-2 py-3"><StatusBadge status={s.status} /></td>
-                    <td className="px-2 py-3 min-w-[140px]">
-                      <Progress value={s.progress} tone="blue" />
-                      <div className="text-[10px] text-muted mt-1">{s.progress}%</div>
-                    </td>
-                    <td className="px-2 py-3 text-muted">{s.evidenceCount}</td>
-                    <td className="px-2 py-3 text-muted">{formatDate(s.eventDate)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-
-        <Card>
-          <CardHeader title="Reviewer Activity" subtitle="Last 24 hours" action={<Activity className="h-4 w-4 text-muted" />} />
-          <div className="space-y-3">
-            {reviewers.map((r, i) => (
-              <div key={r.id} className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="h-9 w-9 rounded-full bg-royal text-white flex items-center justify-center text-xs font-bold">
-                    {r.avatar}
-                  </div>
-                  {r.active && <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-white" />}
+          <Progress value={(witnessStats.completed / witnessStats.total) * 100} tone="blue" />
+          <div className="mt-4 space-y-2 max-h-[180px] overflow-auto pr-1">
+            {witnesses.slice(0, 4).map((w) => (
+              <div key={w.id} className="flex items-center gap-2 text-[12px]">
+                <div className="h-7 w-7 rounded-full bg-royal text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                  {w.firstName[0]}{w.lastName[0]}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold truncate">{r.name}</div>
-                  <div className="text-[11px] text-muted truncate">{["Approved 12 items","Flagged duplicates","Requested clarification","Generated package","Added 3 comments"][i]}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold truncate text-soft">{w.firstName} {w.lastName}</div>
+                  <div className="text-[10px] text-muted truncate">{w.role} · {w.status}</div>
                 </div>
-                <div className="text-[10px] text-muted">{`${i + 1}m`}</div>
+                {w.status === "completed" ? (
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                ) : (
+                  <Mail className="h-4 w-4 text-amber-500" />
+                )}
               </div>
             ))}
+          </div>
+        </Card>
+
+        <Card>
+          <CardHeader title="AI Submission Co-pilot" subtitle="Active suggestions" action={<Sparkles className="h-4 w-4 text-gold" />} />
+          <div className="space-y-3 max-h-[280px] overflow-auto pr-1">
+            {aiAlerts.map((a) => {
+              const tone =
+                a.severity === "critical" || a.severity === "high"
+                  ? "red"
+                  : a.severity === "medium"
+                    ? "amber"
+                    : "blue";
+              return (
+                <div key={a.id} className="rounded-lg border border-line p-3">
+                  <div className="flex items-start gap-2">
+                    <Badge tone={tone}>{a.severity}</Badge>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-[13px] truncate">{a.title}</div>
+                      <div className="text-[11px] text-muted mt-0.5 line-clamp-2">{a.description}</div>
+                      <div className="text-[11px] text-royal mt-1">→ {a.recommendation}</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </Card>
       </div>

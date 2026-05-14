@@ -4,18 +4,23 @@ import {
   FilePlus2,
   UploadCloud,
   Sparkles,
-  ScanSearch,
   Search,
   GitBranch,
   MessagesSquare,
   ShieldAlert,
   HelpCircle,
-  FileText,
   Package,
   BarChart3,
   Lock,
   Trophy,
   ChevronsLeft,
+  FileText,
+  Users,
+  Activity,
+  Send,
+  UserCheck,
+  Timer,
+  ClipboardSignature,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector, toggleSidebar } from "@/redux/store";
 import { cn } from "@/lib/utils";
@@ -25,19 +30,30 @@ const NAV = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/analytics", label: "Analytics", icon: BarChart3 },
   ]},
-  { section: "Submissions", items: [
-    { to: "/submissions/new", label: "Create Submission", icon: FilePlus2 },
+  { section: "Attempt", items: [
+    { to: "/submissions/new", label: "Attempt Setup", icon: FilePlus2 },
+    { to: "/cover-letter", label: "Cover Letter", icon: FileText },
+    { to: "/logbook", label: "Activity Logbook", icon: Activity },
+    { to: "/steward-statement", label: "Steward Statement", icon: UserCheck },
+    { to: "/timekeeper-statement", label: "Timekeeper Statement", icon: Timer },
+    { to: "/witness-statement", label: "Witness Statement", icon: ClipboardSignature },
+  ]},
+  { section: "Witnesses", items: [
+    { to: "/witnesses", label: "Witness System", icon: Users },
+    { to: "/witness/sign/wt_8f3a91", label: "Witness Sign (demo)", icon: Send },
+  ]},
+  { section: "Evidence", items: [
     { to: "/evidence/upload", label: "Evidence Upload", icon: UploadCloud },
+    { to: "/review", label: "Evidence Review", icon: ShieldAlert },
     { to: "/package", label: "Submission Package", icon: Package },
   ]},
-  { section: "AI Intelligence", items: [
+  { section: "AI", items: [
     { to: "/ai/processing", label: "AI Processing", icon: Sparkles },
     { to: "/search", label: "Smart Search", icon: Search },
     { to: "/timeline", label: "Smart Timeline", icon: GitBranch },
     { to: "/validation", label: "AI Validation", icon: ShieldAlert },
   ]},
-  { section: "Review", items: [
-    { to: "/review", label: "Review Workspace", icon: ScanSearch },
+  { section: "Collaborate", items: [
     { to: "/collaboration", label: "Collaboration", icon: MessagesSquare },
     { to: "/clarifications", label: "Clarifications", icon: HelpCircle },
     { to: "/report", label: "Report Generation", icon: FileText },
@@ -61,8 +77,8 @@ export default function Sidebar() {
         </div>
         {!collapsed && (
           <div className="ml-3 min-w-0">
-            <div className="text-[10px] uppercase tracking-[0.2em] text-royal font-bold">Guinness</div>
-            <div className="text-sm font-bold truncate text-soft">Evidence Platform</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-royal font-bold">Glimmora · GWR</div>
+            <div className="text-sm font-bold truncate text-soft">Submission OS</div>
           </div>
         )}
         <button
