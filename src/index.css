@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply text-soft font-sans antialiased;
+  background: #FFFFFF;
+  background-attachment: fixed;
+  letter-spacing: -0.005em;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.015em;
+}
+
+/* Light scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #FFFFFF;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+@layer components {
+  .glass {
+    @apply bg-white border border-line;
+  }
+  .panel {
+    @apply glass rounded-2xl shadow-soft;
+  }
+  .gold-text {
+    color: #B8943D;
+  }
+  .blue-text {
+    color: #0057B8;
+  }
+  .ring-gold {
+    box-shadow: 0 0 0 1px rgba(0, 87, 184, 0.18), 0 6px 16px rgba(15, 23, 42, 0.04);
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold
+           bg-royal text-white hover:bg-royal-400 transition-colors shadow-soft;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold
+           bg-royal text-white hover:bg-royal-400 transition-colors shadow-soft;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium
+           text-soft hover:text-royal hover:bg-canvas transition-colors;
+  }
+  .input {
+    @apply w-full rounded-lg bg-white border border-line px-3 py-2 text-sm text-soft
+           placeholder:text-muted outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium
+           bg-canvas border border-line text-soft;
+  }
+  .shimmer {
+    background: linear-gradient(90deg, #F5F7FA 0%, #EDF0F4 50%, #F5F7FA 100%);
+    background-size: 800px 100%;
+    @apply animate-shimmer;
+  }
+}
