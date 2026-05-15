@@ -1,32 +1,35 @@
 import { Outlet } from "react-router-dom";
-import { Trophy } from "lucide-react";
+import { Trophy, ShieldCheck, ScrollText, Users } from "lucide-react";
 
 export default function AuthLayout() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-canvas">
       <aside className="relative hidden lg:flex flex-col justify-between p-12 w-1/2 overflow-hidden bg-gradient-to-br from-royal to-royal-400 text-white">
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-white/40 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-gold/20 blur-3xl" />
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-white/30 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-gold/25 blur-3xl" />
         <div className="relative z-10 flex items-center gap-3">
           <div className="h-11 w-11 rounded-xl bg-white text-royal flex items-center justify-center shadow-panel">
             <Trophy className="h-6 w-6" />
           </div>
           <div>
-            <div className="text-xs uppercase tracking-[0.2em] text-white/85">Guinness World Records</div>
-            <div className="font-bold">Evidence Submission Platform</div>
+            <div className="text-xs uppercase tracking-[0.22em] text-white/85">Guinness World Records</div>
+            <div className="font-bold">Witness &amp; Adjudicator Portal</div>
           </div>
         </div>
+
         <div className="relative z-10 max-w-md">
           <h1 className="text-4xl font-bold leading-tight">
-            Where world records are <span className="text-gold-300">verified</span> with precision.
+            Where world records are <span className="text-gold-300">witnessed</span> with precision.
           </h1>
           <p className="mt-4 text-white/90">
-            A secure, AI-assisted evidence intelligence workspace used by adjudicators,
-            record holders, and verification teams across the globe.
+            The official digital workspace where independent witnesses, organizers and Guinness
+            adjudicators collaborate to verify record attempts &mdash; replacing decades of paper forms,
+            scans and manual reviews.
           </p>
+
           <div className="mt-10 grid grid-cols-3 gap-4 text-center">
             {[
-              { v: "12.4M", l: "Evidence items" },
+              { v: "8,240+", l: "Witnesses verified" },
               { v: "180+", l: "Countries" },
               { v: "99.98%", l: "Audit integrity" },
             ].map((s) => (
@@ -36,9 +39,16 @@ export default function AuthLayout() {
               </div>
             ))}
           </div>
+
+          <div className="mt-8 space-y-2.5 text-sm text-white/90">
+            <div className="flex items-center gap-3"><Users className="h-4 w-4 text-gold-300" /> Role-based access for Witnesses, Adjudicators &amp; Organizers</div>
+            <div className="flex items-center gap-3"><ScrollText className="h-4 w-4 text-gold-300" /> Digital statements, signatures &amp; immutable audit trail</div>
+            <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4 text-gold-300" /> AI validation, identity checks &amp; tamper detection</div>
+          </div>
         </div>
+
         <div className="relative z-10 text-xs text-white/75">
-          © {new Date().getFullYear()} Guinness World Records Limited · Confidential adjudication system
+          &copy; {new Date().getFullYear()} Guinness World Records Limited &middot; Confidential verification system
         </div>
       </aside>
       <main className="flex-1 flex items-center justify-center p-6 bg-white">

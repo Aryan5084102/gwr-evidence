@@ -94,15 +94,17 @@ export function PageHeader({
   title,
   subtitle,
   actions,
+  eyebrow = "GWR · Witness & Adjudicator Portal",
 }: {
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
+  eyebrow?: string;
 }) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 mb-8 pb-5 border-b border-line">
       <div>
-        <div className="text-[10px] uppercase tracking-[0.22em] text-royal font-bold mb-2">GWR · Evidence Platform</div>
+        <div className="text-[10px] uppercase tracking-[0.22em] text-royal font-bold mb-2">{eyebrow}</div>
         <h1 className="text-[28px] lg:text-[32px] font-bold tracking-tight text-soft leading-tight">{title}</h1>
         {subtitle && <p className="text-sm text-muted mt-2 max-w-2xl leading-relaxed">{subtitle}</p>}
       </div>

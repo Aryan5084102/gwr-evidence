@@ -1,78 +1,130 @@
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  FilePlus2,
-  UploadCloud,
-  Sparkles,
-  Search,
+  ClipboardList,
+  FileText,
   GitBranch,
-  MessagesSquare,
+  FolderOpen,
+  Bell,
+  Settings,
+  Users,
+  Gavel,
   ShieldAlert,
   HelpCircle,
-  Package,
-  BarChart3,
-  Lock,
+  ScrollText,
   Trophy,
   ChevronsLeft,
-  FileText,
-  Users,
-  Activity,
   Send,
+  UploadCloud,
+  BarChart3,
+  Activity,
+  Sparkles,
+  LogOut,
+  FilePlus2,
+  MessagesSquare,
+  Package,
+  Lock,
   UserCheck,
   Timer,
   ClipboardSignature,
+  Search as SearchIcon,
 } from "lucide-react";
-import { useAppDispatch, useAppSelector, toggleSidebar } from "@/redux/store";
+import {
+  useAppDispatch,
+  useAppSelector,
+  toggleSidebar,
+  logout,
+  type Role,
+} from "@/redux/store";
 import { cn } from "@/lib/utils";
 
 const isDev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV === true;
 
-const NAV = [
-  { section: "Overview", items: [
-    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/analytics", label: "Analytics", icon: BarChart3 },
-  ]},
-  { section: "Setup", items: [
-    { to: "/submissions/new", label: "Attempt Setup", icon: FilePlus2 },
-    { to: "/cover-letter", label: "Cover Letter", icon: FileText },
-  ]},
-  { section: "Witnesses", items: [
-    { to: "/witnesses", label: "Witness System", icon: Users },
-    { to: "/steward-statement", label: "Steward Statement", icon: UserCheck },
-    { to: "/timekeeper-statement", label: "Timekeeper Statement", icon: Timer },
-    { to: "/witness-statement", label: "Witness Statement", icon: ClipboardSignature },
-  ]},
-  { section: "Attempt", items: [
-    { to: "/logbook", label: "Activity Logbook", icon: Activity },
-  ]},
-  { section: "Evidence", items: [
-    { to: "/evidence/upload", label: "Evidence Upload", icon: UploadCloud },
-    { to: "/review", label: "Evidence Review", icon: ShieldAlert },
-    { to: "/ai/processing", label: "AI Processing", icon: Sparkles },
-    { to: "/search", label: "Smart Search", icon: Search },
-    { to: "/timeline", label: "Smart Timeline", icon: GitBranch },
-    { to: "/validation", label: "AI Validation", icon: ShieldAlert },
-  ]},
-  { section: "Collaborate", items: [
-    { to: "/collaboration", label: "Collaboration", icon: MessagesSquare },
-    { to: "/clarifications", label: "Clarifications", icon: HelpCircle },
-    { to: "/report", label: "Report Generation", icon: FileText },
-  ]},
-  { section: "Submit", items: [
-    { to: "/package", label: "Submission Package", icon: Package },
-    { to: "/security", label: "Security & Audit", icon: Lock },
-  ]},
-  ...(isDev ? [{ section: "Dev", items: [
-    { to: "/witness/sign/wt_8f3a91", label: "Witness Sign (demo)", icon: Send },
-  ]}] : []),
-];
+const NAV_BY_ROLE: Record<Role, { section: string; items: { to: string; label: string; icon: any }[] }[]> = {
+  witness: [
+    { section: "Workspace", items: [
+      { to: "/witness/attempts", label: "Assigned Attempts", icon: ClipboardList },
+      { to: "/witness/statements", label: "Witness Statements", icon: FileText },
+      { to: "/witness/timeline", label: "Verification Timeline", icon: GitBranch },
+      { to: "/witness/evidence", label: "Uploaded Evidence", icon: FolderOpen },
+    ]},
+    { section: "Account", items: [
+      { to: "/witness/notifications", label: "Notifications", icon: Bell },
+      { to: "/witness/settings", label: "Settings", icon: Settings },
+    ]},
+  ],
+  adjudicator: [
+    { section: "Review", items: [
+      { to: "/adjudicator/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/adjudicator/witnesses", label: "Witness Reviews", icon: Users },
+      { to: "/adjudicator/attempts", label: "Attempt Reviews", icon: Gavel },
+      { to: "/adjudicator/ai-validation", label: "AI Validation", icon: ShieldAlert },
+      { to: "/adjudicator/clarifications", label: "Clarifications", icon: HelpCircle },
+    ]},
+    { section: "Compliance", items: [
+      { to: "/adjudicator/audit", label: "Audit Logs", icon: ScrollText },
+      { to: "/adjudicator/settings", label: "Settings", icon: Settings },
+    ]},
+  ],
+  // Organizer uses the full Evidence Submission Platform nav
+  organizer: [
+    { section: "Overview", items: [
+      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/analytics", label: "Analytics", icon: BarChart3 },
+    ]},
+    { section: "Setup", items: [
+      { to: "/submissions/new", label: "Attempt Setup", icon: FilePlus2 },
+      { to: "/cover-letter", label: "Cover Letter", icon: FileText },
+    ]},
+    { section: "Witnesses", items: [
+      { to: "/witnesses", label: "Witness System", icon: Users },
+      { to: "/organizer/invite", label: "Invite Witnesses", icon: Send },
+      { to: "/steward-statement", label: "Steward Statement", icon: UserCheck },
+      { to: "/timekeeper-statement", label: "Timekeeper Statement", icon: Timer },
+      { to: "/witness-statement", label: "Witness Statement", icon: ClipboardSignature },
+    ]},
+    { section: "Attempt", items: [
+      { to: "/logbook", label: "Activity Logbook", icon: Activity },
+    ]},
+    { section: "Evidence", items: [
+      { to: "/evidence/upload", label: "Evidence Upload", icon: UploadCloud },
+      { to: "/review", label: "Evidence Review", icon: ShieldAlert },
+      { to: "/ai/processing", label: "AI Processing", icon: Sparkles },
+      { to: "/search", label: "Smart Search", icon: SearchIcon },
+      { to: "/timeline", label: "Smart Timeline", icon: GitBranch },
+      { to: "/validation", label: "AI Validation", icon: ShieldAlert },
+    ]},
+    { section: "Collaborate", items: [
+      { to: "/collaboration", label: "Collaboration", icon: MessagesSquare },
+      { to: "/clarifications", label: "Clarifications", icon: HelpCircle },
+      { to: "/report", label: "Report Generation", icon: FileText },
+    ]},
+    { section: "Submit", items: [
+      { to: "/package", label: "Submission Package", icon: Package },
+      { to: "/security", label: "Security & Audit", icon: Lock },
+    ]},
+    { section: "Reports", items: [
+      { to: "/organizer/reports", label: "Reports", icon: BarChart3 },
+      { to: "/organizer/settings", label: "Settings", icon: Settings },
+    ]},
+    ...(isDev ? [{ section: "Dev", items: [
+      { to: "/witness/sign/wt_8f3a91", label: "Witness Sign (demo)", icon: Send },
+    ]}] : []),
+  ],
+};
 
 export default function Sidebar() {
   const collapsed = useAppSelector((s) => s.ui.sidebarCollapsed);
+  const role = useAppSelector((s) => s.auth.user?.role);
   const dispatch = useAppDispatch();
+  const sections = role ? NAV_BY_ROLE[role] : [];
+
+  const workspaceLabel =
+    role === "adjudicator" ? "Adjudicator" : role === "witness" ? "Witness" : role === "organizer" ? "Organizer" : "";
+
   return (
     <aside
-      className="fixed inset-y-0 left-0 z-30 bg-white border-r border-line transition-[width] duration-300"
+      className="fixed inset-y-0 left-0 z-30 bg-white border-r border-line transition-[width] duration-300 flex flex-col"
       style={{ width: collapsed ? 72 : 260 }}
     >
       <div className="h-16 flex items-center px-5 border-b border-line">
@@ -81,8 +133,8 @@ export default function Sidebar() {
         </div>
         {!collapsed && (
           <div className="ml-3 min-w-0">
-            <div className="text-[10px] uppercase tracking-[0.2em] text-royal font-bold">Glimmora · GWR</div>
-            <div className="text-sm font-bold truncate text-soft">Submission OS</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-royal font-bold">GWR Portal</div>
+            <div className="text-sm font-bold truncate text-soft">{workspaceLabel} Workspace</div>
           </div>
         )}
         <button
@@ -93,8 +145,9 @@ export default function Sidebar() {
           <ChevronsLeft className={cn("h-4 w-4 transition-transform", collapsed && "rotate-180")} />
         </button>
       </div>
-      <nav className="overflow-y-auto h-[calc(100vh-64px)] py-5 px-3">
-        {NAV.map((group) => (
+
+      <nav className="overflow-y-auto flex-1 py-5 px-3">
+        {sections.map((group) => (
           <div key={group.section} className="mb-5">
             {!collapsed && (
               <div className="px-3 mb-2 text-[10px] uppercase tracking-[0.2em] text-muted font-semibold">
@@ -109,9 +162,7 @@ export default function Sidebar() {
                   className={({ isActive }) =>
                     cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors relative",
-                      isActive
-                        ? "bg-royal/[0.08] text-royal font-semibold"
-                        : "text-soft hover:bg-canvas"
+                      isActive ? "bg-royal/[0.08] text-royal font-semibold" : "text-soft hover:bg-canvas"
                     )
                   }
                 >
@@ -130,6 +181,16 @@ export default function Sidebar() {
           </div>
         ))}
       </nav>
+
+      <div className="px-3 py-3 border-t border-line">
+        <button
+          onClick={() => dispatch(logout())}
+          className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-soft hover:bg-canvas transition-colors"
+        >
+          <LogOut className="h-4 w-4 text-muted" />
+          {!collapsed && <span>Sign out</span>}
+        </button>
+      </div>
     </aside>
   );
 }
