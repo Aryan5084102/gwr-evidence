@@ -1,19 +1,28 @@
-# GWR Evidence Submission Platform — Frontend
+# GWR Evidence Submission Platform
 
-Premium, enterprise-grade frontend for the **Guinness World Records Evidence Submission Platform** — an AI-powered evidence intelligence workspace for adjudicators, record holders, and verification teams.
+Monorepo containing the Guinness World Records submission platform — a witness portal,
+adjudicator review console, organizer evidence workflow, and an operations admin
+console with adjudicator assignment + live location tracking.
 
-## Tech stack
+```
+gwr-submission/
+├── frontend/   React + Vite + TS + Tailwind + Redux Toolkit + react-query
+└── backend/    FastAPI + SQLAlchemy (async) + JWT + SQLite (dev) / Postgres (prod)
+```
 
-- React 19 · TypeScript · Vite
-- TailwindCSS (custom navy + royal blue + gold design system)
-- Redux Toolkit
-- TanStack Query
-- React Router v6
-- Framer Motion (light micro-animations only)
-- Recharts
-- Lucide Icons
+## Quick start
 
-## Run
+**Backend** (FastAPI on :8000)
+
+```bash
+cd backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+python seed_admin.py          # one-time: seeds demo events/adjudicators
+python run.py
+```
+
+**Frontend** (Vite on :5173)
 
 ```bash
 cd frontend
@@ -21,40 +30,33 @@ npm install
 npm run dev
 ```
 
-App runs on http://localhost:5173
+Open <http://localhost:5173>.
 
-## Routes
+## Demo credentials
 
-| Path | Page |
-| --- | --- |
-| `/login`, `/forgot-password` | Auth |
-| `/dashboard` | Adjudication overview |
-| `/submissions/new` | Stepper-based submission creation |
-| `/evidence/upload` | Drag/drop & queue upload |
-| `/ai/processing` | AI processing center (classification, OCR, STT…) |
-| `/review` | Evidence review workspace |
-| `/search` | AI smart semantic search |
-| `/timeline` | AI-generated event timeline |
-| `/collaboration` | Reviewer threads & presence |
-| `/validation` | AI alerts & quality scoring |
-| `/clarifications` | Clarification ticketing |
-| `/report` | Adjudication report generation |
-| `/package` | Submission package export |
-| `/analytics` | Executive analytics |
-| `/security` | Audit log & integrity |
+| Role        | Email                  | Password           |
+|-------------|------------------------|--------------------|
+| Organizer   | organizer@gwr.com      | Organizer@123      |
+| Adjudicator | adjudicator@gwr.com    | Adjudicator@123    |
+| Witness     | witness@gwr.com        | Witness@123        |
+| Admin       | admin@gwr.com          | Admin@123          |
 
-## Project layout
+If they don't exist yet:
 
-```
-src/
-├── components/       # Reusable UI (Sidebar, EvidenceCard, AIInsightCard, …)
-├── layouts/          # AuthLayout, DashboardLayout
-├── pages/            # 15 product pages
-├── redux/            # Toolkit store (auth, ui)
-├── mock-data/        # Submissions, evidence, reviewers, alerts, timeline
-├── types/            # Domain types
-├── lib/              # cn, formatters
-└── index.css         # Design tokens & component primitives
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@gwr.com","password":"Admin@123","role":"admin","full_name":"Vaigai Ramesh"}'
 ```
 
-All data is mocked — no backend required.
+## Architecture
+
+- Frontend talks to backend via `http://localhost:8000/api/v1` (override with `VITE_API_URL`).
+- JWT access tokens stored in localStorage; refresh handled transparently by `src/lib/api.ts`.
+- Admin role is a superset of organizer + adjudicator at the backend role guards.
+- Live admin tracking polls `/admin/tracking/locations` every 8 seconds.
+
+## Deployment
+
+- Frontend: Vercel — set **Root Directory** to `frontend/`.
+- Backend: any Python host; environment variables in `backend/.env.example`.

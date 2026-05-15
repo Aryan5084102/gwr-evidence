@@ -1,11 +1,44 @@
-node_modules
-dist
-dist-ssr
-*.tsbuildinfo
-.env
-.env.*
+# --- OS / editor ---
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+.claude/
+
+# --- Node / frontend (covered also by frontend/.gitignore) ---
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.tsbuildinfo
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+
+# --- Python / backend ---
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Env / secrets ---
+.env
+.env.local
+.env.*.local
+
+# --- Runtime / databases ---
+*.sqlite
+*.sqlite3
+*.db
+gwr_dev.db
 *.log
-.vite
-.vercel
-.env*.local
+
+# --- Misc ---
+.sixth/
