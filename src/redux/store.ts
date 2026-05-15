@@ -1,8 +1,9 @@
 import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, type TypedUseSelectorHook } from "react-redux";
 import invitationsReducer from "./invitations";
+import adminReducer from "./admin";
 
-export type Role = "witness" | "adjudicator" | "organizer";
+export type Role = "witness" | "adjudicator" | "organizer" | "admin";
 
 export interface AuthUser {
   name: string;
@@ -87,6 +88,7 @@ export const store = configureStore({
     auth: authSlice.reducer,
     ui: uiSlice.reducer,
     invitations: invitationsReducer,
+    admin: adminReducer,
   },
 });
 
@@ -128,6 +130,17 @@ export const MOCK_CREDENTIALS: Record<string, { password: string; user: AuthUser
       roleLabel: "Event Organizer",
       organization: "Aurora Events International",
       avatarInitials: "PS",
+    },
+  },
+  "admin@gwr.com": {
+    password: "Admin@123",
+    user: {
+      name: "Vaigai Ramesh",
+      email: "admin@gwr.com",
+      role: "admin",
+      roleLabel: "GWR Operations Admin",
+      organization: "Guinness World Records · Global Operations",
+      avatarInitials: "VR",
     },
   },
 };

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, setPaletteOpen } from "@/redux/store";
 
-type Cmd = { id: string; label: string; group: string; path?: string; role?: ("witness"|"adjudicator"|"organizer")[] };
+type Cmd = { id: string; label: string; group: string; path?: string; role?: ("witness"|"adjudicator"|"organizer"|"admin")[] };
 
 const CMDS: Cmd[] = [
   { id: "go-w-portal", label: "Open Witness Statement", group: "Navigation", path: "/witness", role: ["witness"] },
@@ -21,6 +21,16 @@ const CMDS: Cmd[] = [
   { id: "go-o-inv", label: "Invite Witnesses", group: "Actions", path: "/organizer/invite", role: ["organizer"] },
   { id: "go-o-up", label: "Upload Evidence", group: "Actions", path: "/organizer/evidence", role: ["organizer"] },
   { id: "go-o-rep", label: "View Reports", group: "Navigation", path: "/organizer/reports", role: ["organizer"] },
+
+  { id: "go-adm-dash", label: "Open Mission Control", group: "Navigation", path: "/admin/dashboard", role: ["admin"] },
+  { id: "go-adm-track", label: "Open Live Tracking", group: "Navigation", path: "/admin/tracking", role: ["admin"] },
+  { id: "go-adm-events", label: "Open Events", group: "Navigation", path: "/admin/events", role: ["admin"] },
+  { id: "go-adm-adj", label: "Open Adjudicator Roster", group: "Navigation", path: "/admin/adjudicators", role: ["admin"] },
+  { id: "go-adm-asn", label: "Manage Assignments", group: "Actions", path: "/admin/assignments", role: ["admin"] },
+  { id: "go-adm-cal", label: "Open Availability Calendar", group: "Navigation", path: "/admin/calendar", role: ["admin"] },
+  { id: "go-adm-anl", label: "Open Analytics", group: "Navigation", path: "/admin/analytics", role: ["admin"] },
+  { id: "go-adm-inb", label: "Open Inbox", group: "Navigation", path: "/admin/inbox", role: ["admin"] },
+  { id: "go-adm-audit", label: "Open Audit Log", group: "Navigation", path: "/admin/audit", role: ["admin"] },
 
   { id: "settings", label: "Open Settings", group: "Account" },
   { id: "notifications", label: "Open Notifications", group: "Account" },

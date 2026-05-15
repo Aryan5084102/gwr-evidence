@@ -28,6 +28,11 @@ import {
   Timer,
   ClipboardSignature,
   Search as SearchIcon,
+  CalendarCheck,
+  MapPin as MapPinIcon,
+  Compass,
+  Inbox as InboxIcon,
+  CalendarRange,
 } from "lucide-react";
 import {
   useAppDispatch,
@@ -51,6 +56,26 @@ const NAV_BY_ROLE: Record<Role, { section: string; items: { to: string; label: s
     { section: "Account", items: [
       { to: "/witness/notifications", label: "Notifications", icon: Bell },
       { to: "/witness/settings", label: "Settings", icon: Settings },
+    ]},
+  ],
+  admin: [
+    { section: "Operations", items: [
+      { to: "/admin/dashboard", label: "Mission Control", icon: LayoutDashboard },
+      { to: "/admin/tracking", label: "Live Tracking", icon: Compass },
+      { to: "/admin/inbox", label: "Inbox", icon: InboxIcon },
+    ]},
+    { section: "Manage", items: [
+      { to: "/admin/events", label: "Events", icon: CalendarCheck },
+      { to: "/admin/adjudicators", label: "Adjudicators", icon: Gavel },
+      { to: "/admin/assignments", label: "Assignments", icon: MapPinIcon },
+      { to: "/admin/calendar", label: "Calendar", icon: CalendarRange },
+    ]},
+    { section: "Insights", items: [
+      { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+    ]},
+    { section: "Compliance", items: [
+      { to: "/admin/audit", label: "Audit Log", icon: ScrollText },
+      { to: "/admin/settings", label: "Settings", icon: Settings },
     ]},
   ],
   adjudicator: [
@@ -120,7 +145,11 @@ export default function Sidebar() {
   const sections = role ? NAV_BY_ROLE[role] : [];
 
   const workspaceLabel =
-    role === "adjudicator" ? "Adjudicator" : role === "witness" ? "Witness" : role === "organizer" ? "Organizer" : "";
+    role === "adjudicator" ? "Adjudicator"
+    : role === "witness" ? "Witness"
+    : role === "organizer" ? "Organizer"
+    : role === "admin" ? "Operations Admin"
+    : "";
 
   return (
     <aside

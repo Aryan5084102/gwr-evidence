@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, Mail, Fingerprint, ShieldCheck, UserCheck, Gavel, Megaphone } from "lucide-react";
+import { Lock, Mail, Fingerprint, ShieldCheck, UserCheck, Gavel, Megaphone, ShieldHalf } from "lucide-react";
 import { useAppDispatch, login, MOCK_CREDENTIALS, type Role } from "@/redux/store";
 
 const ROLES: { key: Role; label: string; email: string; password: string; Icon: any; tag: string }[] = [
   { key: "witness", label: "Witness", email: "witness@gwr.com", password: "Witness@123", Icon: UserCheck, tag: "Independent verification" },
   { key: "adjudicator", label: "Adjudicator", email: "adjudicator@gwr.com", password: "Adjudicator@123", Icon: Gavel, tag: "Official GWR review" },
   { key: "organizer", label: "Organizer", email: "organizer@gwr.com", password: "Organizer@123", Icon: Megaphone, tag: "Event submission" },
+  { key: "admin", label: "Admin", email: "admin@gwr.com", password: "Admin@123", Icon: ShieldHalf, tag: "GWR Operations" },
 ];
 
 export default function Login() {
@@ -50,7 +51,7 @@ export default function Login() {
       <h2 className="text-2xl font-bold tracking-tight text-soft">Witness &amp; Adjudicator Portal</h2>
       <p className="text-sm text-muted mt-1">Sign in to your authorized GWR verification workspace.</p>
 
-      <div className="mt-6 grid grid-cols-3 gap-2">
+      <div className="mt-6 grid grid-cols-4 gap-2">
         {ROLES.map((r) => {
           const active = role === r.key;
           return (
@@ -122,6 +123,7 @@ export default function Login() {
           <div><span className="text-royal font-medium">Witness</span> &middot; witness@gwr.com / Witness@123</div>
           <div><span className="text-royal font-medium">Adjudicator</span> &middot; adjudicator@gwr.com / Adjudicator@123</div>
           <div><span className="text-royal font-medium">Organizer</span> &middot; organizer@gwr.com / Organizer@123</div>
+          <div><span className="text-royal font-medium">Admin</span> &middot; admin@gwr.com / Admin@123</div>
         </div>
       </div>
 

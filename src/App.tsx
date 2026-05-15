@@ -50,6 +50,19 @@ import Reports from "@/pages/organizer/Reports";
 import GenericSettings from "@/pages/Settings";
 import { useAppSelector } from "@/redux/store";
 
+/* ---------- Admin Console (GWR Operations) ---------- */
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminEvents from "@/pages/admin/Events";
+import AdminEventDetail from "@/pages/admin/EventDetail";
+import AdminAdjudicators from "@/pages/admin/Adjudicators";
+import AdminAssignments from "@/pages/admin/Assignments";
+import AdminLiveTracking from "@/pages/admin/LiveTracking";
+import AdminCalendar from "@/pages/admin/Calendar";
+import AdminAnalytics from "@/pages/admin/Analytics";
+import AdminInbox from "@/pages/admin/Inbox";
+import AdminAuditLog from "@/pages/admin/AuditLog";
+import AdminSettingsPage from "@/pages/admin/AdminSettings";
+
 function HomeRedirect() {
   const auth = useAppSelector((s) => s.auth);
   if (!auth.isAuthenticated || !auth.user) return <Navigate to="/login" replace />;
@@ -79,6 +92,21 @@ export default function App() {
         <Route path="/witness/evidence" element={<Navigate to="/witness" replace />} />
         <Route path="/witness/notifications" element={<Navigate to="/witness" replace />} />
         <Route path="/witness/settings" element={<Navigate to="/witness" replace />} />
+      </Route>
+
+      {/* Admin console — GWR Operations */}
+      <Route element={<DashboardLayout requireRole="admin" />}>
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/events" element={<AdminEvents />} />
+        <Route path="/admin/events/:id" element={<AdminEventDetail />} />
+        <Route path="/admin/adjudicators" element={<AdminAdjudicators />} />
+        <Route path="/admin/assignments" element={<AdminAssignments />} />
+        <Route path="/admin/tracking" element={<AdminLiveTracking />} />
+        <Route path="/admin/calendar" element={<AdminCalendar />} />
+        <Route path="/admin/analytics" element={<AdminAnalytics />} />
+        <Route path="/admin/inbox" element={<AdminInbox />} />
+        <Route path="/admin/audit" element={<AdminAuditLog />} />
+        <Route path="/admin/settings" element={<AdminSettingsPage />} />
       </Route>
 
       {/* Adjudicator portal */}
