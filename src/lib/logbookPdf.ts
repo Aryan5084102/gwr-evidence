@@ -1,5 +1,6 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import type { LogbookEntry } from "@/types";
+import { toWinAnsi } from "./pdfText";
 
 /**
  * The official GWR Activity Log Book Template 2022 has two layout variants:
@@ -144,7 +145,7 @@ export async function fillLogbookPdf(
     size = 10,
     bold = false,
   ) => {
-    page.drawText(value, {
+    page.drawText(toWinAnsi(value), {
       x: xy[0],
       y: xy[1],
       size,
@@ -155,7 +156,7 @@ export async function fillLogbookPdf(
 
   const stampHeader = (page: ReturnType<typeof out.addPage>, pageNum: number, total: number) => {
     page.drawText(
-      `${data.recordTitle}   ·   ${data.applicationRef}   ·   Sequence ${pageNum} of ${total}`,
+      toWinAnsi(`${data.recordTitle}   -   ${data.applicationRef}   -   Sequence ${pageNum} of ${total}`),
       { x: 40, y: 815, size: 9, font, color: rgb(0.35, 0.4, 0.5) },
     );
   };

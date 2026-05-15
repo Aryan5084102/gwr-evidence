@@ -97,14 +97,11 @@ export default function ActivityLogbook() {
   const [templateExists, setTemplateExists] = useState<boolean | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [rebuilding, setRebuilding] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(TEMPLATE_URL, { method: "HEAD" })
-      .then((r) =>
-        setTemplateExists(
-          r.ok && r.headers.get("content-type")?.includes("pdf") !== false,
-        ),
-      )
+      .then((r) => setTemplateExists(r.ok))
       .catch(() => setTemplateExists(false));
   }, []);
 
@@ -112,6 +109,7 @@ export default function ActivityLogbook() {
     if (!templateExists) return;
     let cancelled = false;
     setRebuilding(true);
+    setPreviewError(null);
     const t = setTimeout(async () => {
       try {
         const blob = await fillLogbookPdf(fillPayload, TEMPLATE_URL);
@@ -121,10 +119,12 @@ export default function ActivityLogbook() {
           if (prev) URL.revokeObjectURL(prev);
           return url;
         });
+      } catch (err) {
+        if (!cancelled) setPreviewError(err instanceof Error ? err.message : "Failed to build preview");
       } finally {
         if (!cancelled) setRebuilding(false);
       }
-    }, 400);
+    }, 250);
     return () => {
       cancelled = true;
       clearTimeout(t);
@@ -525,8 +525,24 @@ export default function ActivityLogbook() {
           </div>
         )}
 
+        {templateExists && !previewUrl && !previewError && (
+          <div className="flex items-center justify-center bg-canvas text-[12px] text-muted" style={{ height: "90vh" }}>
+            <RefreshCw className="h-4 w-4 animate-spin mr-2" /> Generating PDF preview…
+          </div>
+        )}
+
+        {templateExists && previewError && (
+          <div className="p-8 text-center bg-canvas" style={{ minHeight: "40vh" }}>
+            <FileWarning className="h-10 w-10 text-rose-500 mx-auto mb-3" />
+            <div className="font-bold text-soft mb-1">Could not render preview</div>
+            <div className="text-[12px] text-muted">{previewError}</div>
+            <div className="text-[11px] text-muted mt-2">You can still download the filled PDF using the button above.</div>
+          </div>
+        )}
+
         {templateExists && previewUrl && (
           <object
+            key={previewUrl}
             data={previewUrl + "#toolbar=0&navpanes=0"}
             type="application/pdf"
             className="block w-full bg-canvas"

@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts } from "pdf-lib";
+import { toWinAnsi } from "./pdfText";
 
 /**
  * The official GWR Witness Statement Template 2022 ships with AcroForm fields.
@@ -63,7 +64,7 @@ export async function fillWitnessStatementPdf(
       if (multiline) {
         try { f.enableMultiline(); } catch { /* ignore */ }
       }
-      f.setText(value ?? "");
+      f.setText(toWinAnsi(value));
       try { f.setFontSize(fontSize); } catch { /* ignore */ }
       try { f.updateAppearances(helv); } catch { /* ignore */ }
     } catch {

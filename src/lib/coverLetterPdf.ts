@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts } from "pdf-lib";
+import { toWinAnsi } from "./pdfText";
 
 /**
  * The official GWR Cover Letter Template 2022 ships with AcroForm fields.
@@ -59,7 +60,7 @@ export async function fillCoverLetterPdf(
   const setText = (fieldName: string, value: string, fontSize = 10) => {
     try {
       const f = form.getTextField(fieldName);
-      f.setText(value ?? "");
+      f.setText(toWinAnsi(value));
       try { f.setFontSize(fontSize); } catch { /* ignore */ }
       // Helvetica is universally available; this avoids font-encoding errors on flatten.
       try { f.updateAppearances(helv); } catch { /* ignore */ }
@@ -107,7 +108,7 @@ export async function fillCoverLetterPdf(
   try {
     const desc = form.getTextField("surveyor");
     desc.enableMultiline();
-    desc.setText(data.attemptDescription ?? "");
+    desc.setText(toWinAnsi(data.attemptDescription));
     try { desc.setFontSize(8); } catch { /* ignore */ }
     try { desc.updateAppearances(helv); } catch { /* ignore */ }
   } catch { /* ignore */ }
@@ -123,7 +124,7 @@ export async function fillCoverLetterPdf(
     try {
       const oth = form.getTextField("undefined_8");
       oth.enableMultiline();
-      oth.setText(data.evidence.otherText ?? "");
+      oth.setText(toWinAnsi(data.evidence.otherText));
       try { oth.setFontSize(9); } catch { /* ignore */ }
       try { oth.updateAppearances(helv); } catch { /* ignore */ }
     } catch { /* ignore */ }

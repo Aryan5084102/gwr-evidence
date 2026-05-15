@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts } from "pdf-lib";
+import { toWinAnsi } from "./pdfText";
 
 /**
  * The official GWR Time Keeper Statement Template 2022 ships with AcroForm
@@ -56,7 +57,7 @@ export async function fillTimekeeperStatementPdf(
     try {
       const f = form.getTextField(fieldName);
       if (multiline) { try { f.enableMultiline(); } catch { /* ignore */ } }
-      f.setText(value ?? "");
+      f.setText(toWinAnsi(value));
       try { f.setFontSize(fontSize); } catch { /* ignore */ }
       try { f.updateAppearances(helv); } catch { /* ignore */ }
     } catch {

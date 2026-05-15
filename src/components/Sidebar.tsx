@@ -25,29 +25,29 @@ import {
 import { useAppDispatch, useAppSelector, toggleSidebar } from "@/redux/store";
 import { cn } from "@/lib/utils";
 
+const isDev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV === true;
+
 const NAV = [
   { section: "Overview", items: [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/analytics", label: "Analytics", icon: BarChart3 },
   ]},
-  { section: "Attempt", items: [
+  { section: "Setup", items: [
     { to: "/submissions/new", label: "Attempt Setup", icon: FilePlus2 },
     { to: "/cover-letter", label: "Cover Letter", icon: FileText },
-    { to: "/logbook", label: "Activity Logbook", icon: Activity },
+  ]},
+  { section: "Witnesses", items: [
+    { to: "/witnesses", label: "Witness System", icon: Users },
     { to: "/steward-statement", label: "Steward Statement", icon: UserCheck },
     { to: "/timekeeper-statement", label: "Timekeeper Statement", icon: Timer },
     { to: "/witness-statement", label: "Witness Statement", icon: ClipboardSignature },
   ]},
-  { section: "Witnesses", items: [
-    { to: "/witnesses", label: "Witness System", icon: Users },
-    { to: "/witness/sign/wt_8f3a91", label: "Witness Sign (demo)", icon: Send },
+  { section: "Attempt", items: [
+    { to: "/logbook", label: "Activity Logbook", icon: Activity },
   ]},
   { section: "Evidence", items: [
     { to: "/evidence/upload", label: "Evidence Upload", icon: UploadCloud },
     { to: "/review", label: "Evidence Review", icon: ShieldAlert },
-    { to: "/package", label: "Submission Package", icon: Package },
-  ]},
-  { section: "AI", items: [
     { to: "/ai/processing", label: "AI Processing", icon: Sparkles },
     { to: "/search", label: "Smart Search", icon: Search },
     { to: "/timeline", label: "Smart Timeline", icon: GitBranch },
@@ -58,9 +58,13 @@ const NAV = [
     { to: "/clarifications", label: "Clarifications", icon: HelpCircle },
     { to: "/report", label: "Report Generation", icon: FileText },
   ]},
-  { section: "Governance", items: [
+  { section: "Submit", items: [
+    { to: "/package", label: "Submission Package", icon: Package },
     { to: "/security", label: "Security & Audit", icon: Lock },
   ]},
+  ...(isDev ? [{ section: "Dev", items: [
+    { to: "/witness/sign/wt_8f3a91", label: "Witness Sign (demo)", icon: Send },
+  ]}] : []),
 ];
 
 export default function Sidebar() {
